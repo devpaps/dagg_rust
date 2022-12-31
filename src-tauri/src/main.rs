@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use crate::structs::Api;
+use crate::structs::{Api, Current};
 mod structs;
 
 fn main() {
@@ -19,7 +19,6 @@ fn get_data(city: String) -> structs::Api {
     todo
 }
 
-// TODO: Need to add error handling for when the city is not found
 #[tokio::main]
 async fn get_weather(city: String) -> Result<structs::Api, reqwest::Error> {
     let citas = &city;
@@ -38,12 +37,37 @@ async fn get_weather(city: String) -> Result<structs::Api, reqwest::Error> {
         .json::<Vec<structs::Ghoat>>()
         .await?;
 
+    if x.is_empty() {
+        return Ok(Api {
+            lat: 0.0,
+            timezone_offset: 0,
+            lon: 0.0,
+            current: Current {
+                temp: 0.0,
+                feels_like: 0.0,
+                weather: Vec::new(),
+                visibility: 0,
+                uvi: 0.0,
+                wind_speed: 0.0,
+                wind_deg: 0,
+                clouds: 0,
+                dt: 0,
+                dew_point: 0.0,
+                wind_gust: Some(0.0),
+                pressure: 0.0,
+                humidity: 0.0,
+
+                sunrise: 0,
+                sunset: 0,
+            },
+            timezone: "".to_string(),
+            error_message: Some("City not found".to_string())
+        });
+    }
     println!("{:#?}", x);
 
     let lat: String = x[0].lat.to_string();
     let lon: String = x[0].lon.to_string();
-    // const API = dotenv().ok();
-    // std::env::var("API_KEY").unwrap()
     let url = format!(
         "https://api.openweathermap.org/data/3.0/onecall?lat={}&lon={}&appid={}&units=metric&lang=sv",
         lat, lon, api_url
@@ -57,6 +81,7 @@ async fn get_weather(city: String) -> Result<structs::Api, reqwest::Error> {
         .await?;
 
     let v: Vec<&Api> = std::iter::once(&client).collect();
+
     println!("{:#?}", v);
     println!("{}", city);
 

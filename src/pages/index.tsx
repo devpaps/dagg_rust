@@ -1,9 +1,5 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import Image from "next/image";
-import reactLogo from "../assets/react.svg";
-import tauriLogo from "../assets/tauri.svg";
-import nextLogo from "../assets/next.svg";
 
 // type Props = {
 //   name: string;
@@ -12,6 +8,7 @@ import nextLogo from "../assets/next.svg";
 interface Data {
   name: string;
   current: { temp: number, humidity: number, weather: { description: string }[] }
+  error_message?: string
 }
 
 function App() {
@@ -21,6 +18,8 @@ function App() {
   async function greet() {
     setGreetMsg(await invoke("get_data", { city: name }));
   }
+
+  console.log(greetMsg)
 
   return (
     <div className="container">
@@ -40,9 +39,20 @@ function App() {
           </button>
         </div>
       </div>
-      <p>{greetMsg ? `Temperatur: ${greetMsg?.current?.temp.toFixed(1)} °C` : ""}</p>
-      <p>{greetMsg ? `Fuktighet: ${greetMsg?.current?.humidity} %` : ""}</p>
-      <p>{greetMsg ? `${greetMsg?.current?.weather[0].description}` : ""}</p>
+      {greetMsg ? (
+        <>
+          {greetMsg.error_message ? (
+            <p>{greetMsg.error_message}</p>
+          ) : (
+            <>
+              <p>{`Temperatur: ${greetMsg.current.temp.toFixed(1)} °C`}</p>
+              <p>{`Fuktighet: ${greetMsg.current.humidity} %`}</p>
+              <p>{greetMsg.current.weather[0].description}</p>
+            </>
+          )}
+        </>
+      ) : null}
+
     </div>
   );
 }
