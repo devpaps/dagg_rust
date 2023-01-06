@@ -61,7 +61,7 @@ async fn get_weather(city: String) -> Result<structs::Api, reqwest::Error> {
                 sunset: 0,
             },
             timezone: "".to_string(),
-            error_message: Some("City not found".to_string())
+            error_message: Some("Stad ej hittad".to_string())
         });
     }
     println!("{:#?}", x);
