@@ -1,6 +1,15 @@
 import { useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
-import { Box, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Container,
+  Flex,
+  Heading,
+  Input,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import SideBar from '../components/Sidebar';
 
 interface Data {
@@ -23,38 +32,46 @@ function App() {
 
   return (
     <>
-      <SideBar />
-      <div className="container">
-        <h1>Välkommen till Dagg!</h1>
-
-        <p>Ange en svensk stad för att se det aktuella vädret</p>
-
-        <div className="row">
-          <div>
-            <input
-              id="greet-input"
-              onChange={(e) => setName(e.currentTarget.value)}
-              placeholder="Ex. Stockholm"
-            />
-            <button type="button" onClick={() => greet()}>
-              Hämta
-            </button>
-          </div>
-        </div>
-        {greetMsg ? (
+      <Box>
+        <SideBar />
+      </Box>
+      <Flex justifyContent="center">
+        <Flex>
           <Box>
-            {greetMsg.error_message ? (
-              <Text>{greetMsg.error_message}</Text>
-            ) : (
-              <>
-                <p>{`Temperatur: ${greetMsg.current.temp.toFixed(1)} °C`}</p>
-                <p>{`Fuktighet: ${greetMsg.current.humidity} %`}</p>
-                <p>{greetMsg.current.weather[0].description}</p>
-              </>
-            )}
+            <Heading>Välkommen till Dagg!</Heading>
+
+            <Text>Ange en svensk stad för att se det aktuella vädret</Text>
+
+            <VStack>
+              <Box>
+                <Input
+                  id="greet-input"
+                  onChange={(e) => setName(e.currentTarget.value)}
+                  placeholder="Ex. Stockholm"
+                />
+                <Button type="button" onClick={() => greet()}>
+                  Hämta
+                </Button>
+              </Box>
+            </VStack>
+            {greetMsg ? (
+              <Flex direction="column">
+                {greetMsg.error_message ? (
+                  <Text>{greetMsg.error_message}</Text>
+                ) : (
+                  <>
+                    <Text>{`Temperatur: ${greetMsg.current.temp.toFixed(
+                      1,
+                    )} °C`}</Text>
+                    <Text>{`Fuktighet: ${greetMsg.current.humidity} %`}</Text>
+                    <Text>{greetMsg.current.weather[0].description}</Text>
+                  </>
+                )}
+              </Flex>
+            ) : null}
           </Box>
-        ) : null}
-      </div>
+        </Flex>
+      </Flex>
     </>
   );
 }
