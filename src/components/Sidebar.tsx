@@ -1,11 +1,10 @@
-import { Flex, Link } from '@chakra-ui/react';
+import React from 'react';
+import { Box, Text } from '@chakra-ui/react';
 
 export default function Sidebar() {
   return (
-    <Flex direction="column" align="center" justify="center">
-      <Link href="/">Home</Link>
-      <Link href="/about">About</Link>
-      <Link href="/contact">Contact</Link>
-    </Flex>
+    <Box width="300px" borderRight="1px solid gray">
+      <Text>Navbar</Text>
+    </Box>
   );
 }
