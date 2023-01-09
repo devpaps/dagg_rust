@@ -24,10 +24,12 @@ async fn get_weather(city: String) -> Result<structs::Api, reqwest::Error> {
     let citas = &city;
     let limit: i8 = 5;
     let api_url = "8e4904d074949fb1ae7d158b04961660";
+    let lang = "sv";
+    let units = "metric";
 
     let testar = format!(
-        "http://api.openweathermap.org/geo/1.0/direct?q={}&limit={}&appid={}",
-        citas, limit, api_url
+        "http://api.openweathermap.org/geo/1.0/direct?q={}&limit={}&appid={}&lang={}&units={}",
+        citas, limit, api_url, lang, units
     );
 
     let x = reqwest::Client::new()
@@ -56,7 +58,6 @@ async fn get_weather(city: String) -> Result<structs::Api, reqwest::Error> {
                 wind_gust: Some(0.0),
                 pressure: 0.0,
                 humidity: 0.0,
-
                 sunrise: 0,
                 sunset: 0,
             },
