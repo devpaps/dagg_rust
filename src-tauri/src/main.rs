@@ -21,6 +21,13 @@ fn get_data(city: String) -> structs::Api {
     todo
 }
 
+
+// #[tauri::command]
+// fn reset_to_imperal(city: String) -> structs::Api {
+//     let todo = get_weather(city).expect("error while getting data");
+//     todo
+// }
+
 #[tokio::main]
 async fn get_weather(city: String) -> Result<structs::Api, reqwest::Error> {
     let citas = &city;
