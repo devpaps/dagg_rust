@@ -10,6 +10,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { TbGps } from 'react-icons/tb';
 import SideBar from '../components/Sidebar';
 import Weather from '../components/Weather';
 import { Data } from '../types/index';
@@ -17,19 +18,27 @@ import { Data } from '../types/index';
 function App() {
   const [greetMsg, setGreetMsg] = useState<Data>();
   const [name, setName] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [city, setCity] = useState('');
 
-  async function greet() {
+  const greet = async () => {
     setGreetMsg(await invoke('get_data', { city: name }));
-  }
+  };
 
-  function handleChange(e: any) {
+  // const getImperal = async () => {
+  //   await invoke('reset_to_imperal', { city: name });
+  // };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setName('');
+    setSubmitted(true);
+    setCity(name);
+  };
 
-    setName(e.currentTarget.value);
-  }
-
-  console.log(greetMsg);
-  console.log(name);
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
 
   return (
     <Grid templateColumns="300px 1fr">
@@ -47,27 +56,40 @@ function App() {
               <Text fontWeight="medium">
                 Ange en svensk stad för att se det aktuella vädret
               </Text>
-              <Box>
-                <form onSubmit={handleChange}>
+              <>
+                <form onSubmit={handleSubmit}>
                   <Input
                     id="greet-input"
                     size="lg"
+                    value={name}
                     mt={4}
-                    onChange={(e) => setName(e.currentTarget.value)}
+                    onChange={handleChange}
                     placeholder="Ex. Stockholm"
                   />
+
+                  <Button mt="3" size="xs">
+                    Metric: °C, m/s
+                  </Button>
+
+                  <Button mt="3" ml={3} size="xs">
+                    Imperal: °F, mph
+                  </Button>
+
                   <Button
                     type="submit"
                     width="100%"
                     mt={5}
                     size="lg"
-                    onClick={() => greet()}
+                    onClick={greet}
                   >
                     Hämta
                   </Button>
                 </form>
-              </Box>
-              {greetMsg ? <Weather greetMsg={greetMsg} /> : null}
+
+                {TbGps}
+              </>
+
+              {submitted ? <Weather greetMsg={greetMsg!} city={city} /> : null}
             </VStack>
           </Box>
         </Flex>
