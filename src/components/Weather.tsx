@@ -5,9 +5,14 @@ import { Data } from '../types/index';
 
 interface Props {
   greetMsg: Data;
+  city: string;
 }
 
-export default function Weather({ greetMsg }: Props) {
+function convertToUpperCase(city: string) {
+  return city.charAt(0).toUpperCase() + city.slice(1);
+}
+
+export default function Weather({ greetMsg, city }: Props) {
   return (
     <Flex direction="column">
       {greetMsg?.error_message ? (
@@ -16,8 +21,16 @@ export default function Weather({ greetMsg }: Props) {
         </Text>
       ) : (
         <Box mt={10}>
-          <Text>{`Temperatur: ${greetMsg?.current?.temp.toFixed(1)} °C`}</Text>
-          <Text>{`Fuktighet: ${greetMsg?.current?.humidity} %`}</Text>
+          <Text fontSize="x-large" mb={5} textAlign="center" fontWeight="bold">
+            {convertToUpperCase(city)}
+          </Text>
+          <Text>{`Temperatur: ${greetMsg?.current?.temp.toFixed(1)}°C`}</Text>
+          <Text>
+            Fuktighet:{' '}
+            <Text as="span" fontWeight="bold">
+              {greetMsg?.current?.humidity}%
+            </Text>
+          </Text>
           <HStack>
             <Image
               objectFit="contain"
