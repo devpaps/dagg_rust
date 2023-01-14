@@ -1,5 +1,12 @@
 use serde::{Deserialize, Serialize};
 
+#[derive( Debug, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum OpenWeatherMapUnits {
+    Metric,
+    Imperial,
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Api {
     pub lat: f64,

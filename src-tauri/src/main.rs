@@ -3,10 +3,12 @@
     windows_subsystem = "windows"
 )]
 
-use crate::structs::{Api, Current};
+use crate::structs::{Api, Current, OpenWeatherMapUnits};
+use dotenv::dotenv;
 mod structs;
 
 fn main() {
+    dotenv().ok();
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![get_data])
         .run(tauri::generate_context!())
@@ -19,16 +21,31 @@ fn get_data(city: String) -> structs::Api {
     todo
 }
 
+
+// #[tauri::command]
+// fn reset_to_imperal(city: String) -> structs::Api {
+//     let todo = get_weather(city).expect("error while getting data");
+//     todo
+// }
+
 #[tokio::main]
 async fn get_weather(city: String) -> Result<structs::Api, reqwest::Error> {
     let citas = &city;
     let limit: i8 = 5;
-    let api_url = "8e4904d074949fb1ae7d158b04961660";
+    let api_key = std::env::var("API_KEY").expect("API_KEY must be set");
+    let lang = "sv";
+    // let units = "metric";
+    let units = match OpenWeatherMapUnits::Imperial {
+        OpenWeatherMapUnits::Imperial => "imperial",
+        OpenWeatherMapUnits::Metric => "metric",
+    };
 
     let testar = format!(
-        "http://api.openweathermap.org/geo/1.0/direct?q={}&limit={}&appid={}",
-        citas, limit, api_url
+        "http://api.openweathermap.org/geo/1.0/direct?q={}&limit={}&appid={}&lang={}&units={}",
+        citas, limit, api_key, lang, units
     );
+
+    println!("{}", testar);
 
     let x = reqwest::Client::new()
         .get(testar)
@@ -56,12 +73,11 @@ async fn get_weather(city: String) -> Result<structs::Api, reqwest::Error> {
                 wind_gust: Some(0.0),
                 pressure: 0.0,
                 humidity: 0.0,
-
                 sunrise: 0,
                 sunset: 0,
             },
             timezone: "".to_string(),
-            error_message: Some("City not found".to_string())
+            error_message: Some("Stad ej hittad".to_string()),
         });
     }
     println!("{:#?}", x);
@@ -70,7 +86,7 @@ async fn get_weather(city: String) -> Result<structs::Api, reqwest::Error> {
     let lon: String = x[0].lon.to_string();
     let url = format!(
         "https://api.openweathermap.org/data/3.0/onecall?lat={}&lon={}&appid={}&units=metric&lang=sv",
-        lat, lon, api_url
+        lat, lon, api_key
     );
 
     let client = reqwest::Client::new()
