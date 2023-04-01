@@ -12,7 +12,7 @@
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "all": false
     },
     "bundle": {
       "active": true,
@@ -55,11 +55,15 @@
     },
     "windows": [
       {
+        "title": "Dagg",
+        "transparent": true,
         "fullscreen": false,
-        "height": 600,
+        "height": 725,
+        "width": 1400,
+        "minWidth": 768,
+				"minHeight": 500,
         "resizable": true,
         "title": "Dagg",
-        "width": 800,
         "center": true
       }
     ]
