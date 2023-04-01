@@ -1,99 +1,165 @@
-import { useState } from 'react';
-import { invoke } from '@tauri-apps/api/tauri';
+import { useReducer } from "react";
+import { invoke } from "@tauri-apps/api/tauri";
 import {
+  Badge,
   Box,
-  Button,
-  Flex,
   Grid,
+  GridItem,
   Heading,
+  HStack,
   Input,
-  Text,
   VStack,
-} from '@chakra-ui/react';
-import { TbGps } from 'react-icons/tb';
-import SideBar from '../components/Sidebar';
-import Weather from '../components/Weather';
-import { Data } from '../types/index';
+} from "@chakra-ui/react";
+import { TbGps } from "react-icons/tb";
+import SideBar from "../components/Sidebar";
+import Weather from "../components/Weather";
+import CurrentDate from "../components/CurrentDate";
+import { Data } from "../types/index";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState<Data>();
-  const [name, setName] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const [city, setCity] = useState('');
+  const [state, dispatch] = useReducer(
+    (prev: any, next: any) => {
+      const newState = { ...prev, ...next };
+
+      if (newState.greetMsg === "") {
+        newState.error = true;
+      }
+
+      // if (newState.city === '') {
+      //   newState.error = true;
+      // }
+      //
+      // if (newState.city !== '') {
+      //   newState.error = false;
+      // }
+
+      return newState;
+    },
+    {
+      error: false as boolean,
+      greetMsg: {} as Data,
+      name: "" as string,
+      submitted: false as boolean,
+      city: "" as string,
+      units: "" as string,
+    },
+  );
 
   const greet = async () => {
-    setGreetMsg(await invoke('get_data', { city: name }));
+    dispatch({
+      greetMsg: await invoke("get_data", {
+        city: state.name.toLowerCase(),
+        units: "metric",
+      }),
+      units: "metric",
+    });
   };
 
-  // const getImperal = async () => {
-  //   await invoke('reset_to_imperal', { city: name });
-  // };
+  const getCelcius = async () => {
+    dispatch({
+      greetMsg: await invoke("get_data", {
+        city: state.city,
+        units: "metric",
+      }),
+      units: "metric",
+    });
+  };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const getImperal = async () => {
+    dispatch({
+      greetMsg: await invoke("get_data", {
+        city: state.city,
+        units: "imperial",
+      }),
+      units: "imperial",
+    });
+  };
+
+  const handleSubmit = (e: React.KeyboardEvent) => {
     e.preventDefault();
-    setName('');
-    setSubmitted(true);
-    setCity(name);
+    if (e.key === "Enter") {
+      dispatch({ submitted: true, city: state.name, name: "" });
+      greet();
+    }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
+    dispatch({ name: event.target.value });
   };
 
+  console.log(state.error);
+
   return (
-    <Grid templateColumns="300px 1fr">
-      <Box>
+    <Grid
+      templateAreas={`"navbar date"
+                      "navbar searchInput"
+                      "navbar searchResult"`}
+      gridTemplateRows="150px 100px"
+      gridTemplateColumns="300px 1fr"
+    >
+      <GridItem area="navbar">
         <SideBar />
-      </Box>
-      <Flex justifyContent="center">
-        <Flex>
-          <Box>
-            <Box mt={20}>
-              <Heading>Dagens väder</Heading>
-            </Box>
+      </GridItem>
+      <GridItem area="date">
+        <CurrentDate />
+      </GridItem>
+      <GridItem area="searchInput">
+        <HStack>
+          {/* <Text fontWeight="medium"> */}
+          {/*   Ange en svensk stad för att se det aktuella vädret */}
+          {/* </Text> */}
+          {/* <FormControl isInvalid={state.error}> */}
+          <Input
+            id="greet-input"
+            required
+            size="lg"
+            value={state.name}
+            mt={4}
+            onChange={handleChange}
+            onKeyUp={handleSubmit}
+            placeholder="Ex. Stockholm"
+          />
+          {/* {!state.error ? ( */}
+          {/*   <FormHelperText fontWeight="medium"> */}
+          {/*     Ange en svensk stad för att se det aktuella vädret */}
+          {/*   </FormHelperText> */}
+          {/* ) : ( */}
+          {/*   <FormErrorMessage>Ange en stad</FormErrorMessage> */}
+          {/* )} */}
+          {/* </FormControl> */}
 
-            <VStack mt={20}>
-              <Text fontWeight="medium">
-                Ange en svensk stad för att se det aktuella vädret
-              </Text>
-              <>
-                <form onSubmit={handleSubmit}>
-                  <Input
-                    id="greet-input"
-                    size="lg"
-                    value={name}
-                    mt={4}
-                    onChange={handleChange}
-                    placeholder="Ex. Stockholm"
-                  />
+          <Badge
+            mt="3"
+            size="xs"
+            _hover={{ cursor: "pointer" }}
+            onClick={getCelcius}
+          >
+            Metric: °C, m/s
+          </Badge>
 
-                  <Button mt="3" size="xs">
-                    Metric: °C, m/s
-                  </Button>
+          <Badge
+            mt="3"
+            ml={3}
+            size="xs"
+            _hover={{ cursor: "pointer" }}
+            onClick={getImperal}
+          >
+            Imperal: °F, mph
+          </Badge>
 
-                  <Button mt="3" ml={3} size="xs">
-                    Imperal: °F, mph
-                  </Button>
-
-                  <Button
-                    type="submit"
-                    width="100%"
-                    mt={5}
-                    size="lg"
-                    onClick={greet}
-                  >
-                    Hämta
-                  </Button>
-                </form>
-
-                {TbGps}
-              </>
-
-              {submitted ? <Weather greetMsg={greetMsg!} city={city} /> : null}
-            </VStack>
-          </Box>
-        </Flex>
-      </Flex>
+          {TbGps}
+        </HStack>
+      </GridItem>
+      <GridItem area="searchResult">
+        {state.submitted ? (
+          <Weather
+            error={state.error}
+            greetMsg={state.greetMsg!}
+            city={state.city}
+            units={state.units}
+          />
+        ) : null}
+      </GridItem>
     </Grid>
   );
 }
