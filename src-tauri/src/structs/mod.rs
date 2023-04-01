@@ -8,6 +8,16 @@ pub enum OpenWeatherMapUnits {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
+pub struct ErrorResponse {
+    pub lat: f64,
+    pub timezone_offset: i32,
+    pub lon: f64,
+    pub current: Current,
+    pub timezone: String,
+    pub error_message: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Api {
     pub lat: f64,
     pub lon: f64,
