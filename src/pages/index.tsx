@@ -1,15 +1,6 @@
 import { useReducer } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import {
-  Badge,
-  Box,
-  Grid,
-  GridItem,
-  Heading,
-  HStack,
-  Input,
-  VStack,
-} from "@chakra-ui/react";
+import { Badge, Grid, GridItem, HStack, Input } from "@chakra-ui/react";
 import { TbGps } from "react-icons/tb";
 import SideBar from "../components/Sidebar";
 import Weather from "../components/Weather";
@@ -105,49 +96,49 @@ function App() {
       </GridItem>
       <GridItem area="searchInput">
         <HStack>
-          {/* <Text fontWeight="medium"> */}
-          {/*   Ange en svensk stad för att se det aktuella vädret */}
-          {/* </Text> */}
-          {/* <FormControl isInvalid={state.error}> */}
-          <Input
-            id="greet-input"
-            required
-            size="lg"
-            value={state.name}
-            mt={4}
-            onChange={handleChange}
-            onKeyUp={handleSubmit}
-            placeholder="Ex. Stockholm"
-          />
-          {/* {!state.error ? ( */}
-          {/*   <FormHelperText fontWeight="medium"> */}
-          {/*     Ange en svensk stad för att se det aktuella vädret */}
-          {/*   </FormHelperText> */}
-          {/* ) : ( */}
-          {/*   <FormErrorMessage>Ange en stad</FormErrorMessage> */}
-          {/* )} */}
-          {/* </FormControl> */}
+          <>
+            {/* <Text fontWeight="medium"> */}
+            {/*   Ange en svensk stad för att se det aktuella vädret */}
+            {/* </Text> */}
+            {/* <FormControl isInvalid={state.error}> */}
+            <Input
+              id="greet-input"
+              required
+              size="lg"
+              value={state.name}
+              mt={4}
+              onChange={handleChange}
+              onKeyUp={handleSubmit}
+              placeholder="Ex. Stockholm"
+            />
+            {/* {!state.error ? ( */}
+            {/*   <FormHelperText fontWeight="medium"> */}
+            {/*     Ange en svensk stad för att se det aktuella vädret */}
+            {/*   </FormHelperText> */}
+            {/* ) : ( */}
+            {/*   <FormErrorMessage>Ange en stad</FormErrorMessage> */}
+            {/* )} */}
+            {/* </FormControl> */}
 
-          <Badge
-            mt="3"
-            size="xs"
-            _hover={{ cursor: "pointer" }}
-            onClick={getCelcius}
-          >
-            Metric: °C, m/s
-          </Badge>
+            <Badge
+              mt="3"
+              size="xs"
+              _hover={{ cursor: "pointer" }}
+              onClick={getCelcius}
+            >
+              Metric: °C, m/s
+            </Badge>
 
-          <Badge
-            mt="3"
-            ml={3}
-            size="xs"
-            _hover={{ cursor: "pointer" }}
-            onClick={getImperal}
-          >
-            Imperal: °F, mph
-          </Badge>
-
-          {TbGps}
+            <Badge
+              mt="3"
+              ml={3}
+              size="xs"
+              _hover={{ cursor: "pointer" }}
+              onClick={getImperal}
+            >
+              Imperal: °F, mph
+            </Badge>
+          </>
         </HStack>
       </GridItem>
       <GridItem area="searchResult">
